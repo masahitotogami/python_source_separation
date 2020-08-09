@@ -1,1 +1,1 @@
-# python_source_separation
+# Pythonで学ぶ音源分離（機械学習実践シリーズ）のソースコードを紹介します
