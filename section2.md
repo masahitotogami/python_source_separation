@@ -9,4 +9,6 @@
 * [音声データを録音する](sample_code_c2_6.py)
 * [NumPyを用いた複素数の四則演算](sample_code_c2_7.py)
 * [stftによる短時間フーリエ変換](sample_code_c2_8.py)
+* [stftによる短時間フーリエ変換](sample_code_c2_8.py)
+* [短時間フーリエ変換で変換した信号のスペクトログラム表示](sample_code_c2_9.py)
 
