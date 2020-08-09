@@ -11,4 +11,6 @@
 * [stftによる短時間フーリエ変換](section2/sample_code_c2_8.py)
 * [stftによる短時間フーリエ変換](section2/sample_code_c2_8.py)
 * [短時間フーリエ変換で変換した信号のスペクトログラム表示](section2/sample_code_c2_9.py)
+* [短時間逆フーリエ変換により時間周波数領域の信号を時間領域の信号に戻す](section2/sample_code_c2_10.py)
+* [特定の周波数を消した音を再生する](section2/sample_code_c2_11.py)
 
