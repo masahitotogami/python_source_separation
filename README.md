@@ -5,7 +5,7 @@
 ## 書籍概要
 
 ![Pythonで学ぶ音源分離カバー](cover.jpg)
-* [Pythonで学ぶ音源分離カバー](https://book.impress.co.jp/books/1119101154 "Pythonで学ぶ音源分離（機械学習実践シリーズ）")
+* [Pythonで学ぶ音源分離（機械学習実践シリーズ）](https://book.impress.co.jp/books/1119101154 "Pythonで学ぶ音源分離（機械学習実践シリーズ）")
 * 価格: 3,500円+税
 * 発売日: 2020年8月24日
 * ページ数: 352
