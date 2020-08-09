@@ -13,4 +13,6 @@
 * [短時間逆フーリエ変換により時間周波数領域の信号を時間領域の信号に戻す](section2/sample_code_c2_10.py)
 * [特定の周波数を消した音を再生する(高域成分を除去)](section2/sample_code_c2_11.py)
 * [特定の周波数を消した音を再生する(低域成分を除去)](section2/sample_code_c2_12.py)
+* [スペクトルサブトラクションによる雑音抑圧](section2/sample_code_c2_13.py)
+* [ウィナーフィルタによる雑音抑圧](section2/sample_code_c2_14.py)
 
