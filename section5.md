@@ -1,6 +1,6 @@
 ## 第5章のサンプルコード
 
-* [行列の基本的な演算](section3/sample_code_c3_1.py)
+* [インパルス応答の畳み込みの例](section5/sample_code_c5_1.py)
 * [アインシュタイン縮約記法を用いたテンソル計算](section3/sample_code_c3_2.py)
 * [アインシュタイン縮約記法を用いたテンソル計算(3つのテンソル)](section3/sample_code_c3_3.py)
 * [逆行列演算](section3/sample_code_c3_4.py)
