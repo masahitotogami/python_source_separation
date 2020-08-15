@@ -41,7 +41,7 @@ for clean_wave_file in clean_wave_files:
 sample_rate=16000
 
 #音声と雑音との比率 [dB]
-SNR=90.
+SNR=10.
 
 #部屋の大きさ
 room_dim = np.r_[10.0, 10.0, 10.0]
