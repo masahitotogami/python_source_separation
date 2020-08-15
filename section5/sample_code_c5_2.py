@@ -33,7 +33,9 @@ for clean_wave_file in clean_wave_files:
     clean_data[s,:wav.getnframes()]=data
     wav.close()
     s=s+1
+    
 # シミュレーションのパラメータ
+
 #サンプリング周波数
 sample_rate=16000
 
