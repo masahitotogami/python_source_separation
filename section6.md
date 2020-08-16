@@ -12,3 +12,4 @@
 * [最ゆうビームフォーマ](section6/sample_code_c6_10.py)
 * [最大SNRビームフォーマ（MaxSNR）に基づく音源分離](section6/sample_code_c6_11.py)
 * [マルチチャンネルウィナーフィルタ（MWF）に基づく音源分離](section6/sample_code_c6_12.py)
+* [DSBF、MVDR、MaxSNR、MWFの全手法のSNR向上率を評価](section6/sample_code_c6_13.py)
