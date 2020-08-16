@@ -84,8 +84,11 @@ def write_file_from_time_signal(signal,file_name,sample_rate):
 np.random.seed(0)
 
 #畳み込みに用いる音声波形
-clean_wave_files=["./CMU_ARCTIC/cmu_us_aew_arctic/wav/arctic_a0001.wav","./CMU_ARCTIC/cmu_us_axb_arctic/wav/arctic_a0002.wav"]
+clean_wave_files=["./CMU_ARCTIC/cmu_us_aew_arctic/wav/arctic_a0001.wav"]
 
+
+#雑音だけの区間のサンプル数を設定
+n_noise_only=40000
 
 #音源数
 n_sources=len(clean_wave_files)
@@ -99,7 +102,7 @@ for clean_wave_file in clean_wave_files:
         n_samples=wav.getnframes()
     wav.close()
 
-clean_data=np.zeros([n_sources,n_samples])
+clean_data=np.zeros([n_sources,n_samples+n_noise_only])
 
 #ファイルを読み込む
 s=0
@@ -108,7 +111,7 @@ for clean_wave_file in clean_wave_files:
     data=wav.readframes(wav.getnframes())
     data=np.frombuffer(data, dtype=np.int16)
     data=data/np.iinfo(np.int16).max
-    clean_data[s,:wav.getnframes()]=data
+    clean_data[s,n_noise_only:n_noise_only+wav.getnframes()]=data
     wav.close()
     s=s+1
 # シミュレーションのパラメータ
@@ -122,11 +125,12 @@ N=1024
 #周波数の数
 Nk=N/2+1
 
+
 #各ビンの周波数
 freqs=np.arange(0,Nk,1)*sample_rate/N
 
 #音声と雑音との比率 [dB]
-SNR=90.
+SNR=20.
 
 #部屋の大きさ
 room_dim = np.r_[10.0, 10.0, 10.0]
@@ -156,8 +160,7 @@ room.add_microphone_array(pa.MicrophoneArray(R, fs=room.fs))
 
 #音源の場所
 doas=np.array(
-    [[np.pi/2., 0],
-     [np.pi/2.,np.pi/2.]
+    [[np.pi/2., 0]
     ]    )
 
 #音源とマイクロホンの距離
@@ -183,16 +186,19 @@ multi_conv_data=room.mic_array.signals
 
 
 #畳み込んだ波形をファイルに書き込む
-write_file_from_time_signal(multi_conv_data[0]*np.iinfo(np.int16).max/20.,"./mvdr_inter_in.wav",sample_rate)
+write_file_from_time_signal(multi_conv_data[0,n_noise_only:]*np.iinfo(np.int16).max/20.,"./mix_in_mlbf.wav",sample_rate)
 
 #Near仮定に基づくステアリングベクトルを計算: steering_vectors(Nk x Ns x M)
-near_steering_vectors=calculate_steering_vector(R,source_locations[:,:1],freqs,is_use_far=False)
+near_steering_vectors=calculate_steering_vector(R,source_locations,freqs,is_use_far=False)
 
 #短時間フーリエ変換を行う
 f,t,stft_data=sp.stft(multi_conv_data,fs=sample_rate,window="hann",nperseg=N)
 
+#雑音だけの区間のフレーム数
+n_noise_only_frame=np.sum(t<(n_noise_only/sample_rate))
+
 #共分散行列を計算する
-Rcov=np.einsum("mkt,nkt->kmn",stft_data,np.conjugate(stft_data))
+Rcov=np.einsum("mkt,nkt->kmn",stft_data[...,:n_noise_only_frame],np.conjugate(stft_data[...,:n_noise_only_frame]))
 
 #共分散行列の逆行列を計算する
 Rcov_inverse=np.linalg.pinv(Rcov)
@@ -215,4 +221,6 @@ t,mvdr_out=sp.istft(c_hat[0],fs=sample_rate,window="hann",nperseg=N)
 mvdr_out=mvdr_out*np.iinfo(np.int16).max/20.
 
 #ファイルに書き込む
-write_file_from_time_signal(mvdr_out,"./mvdr_inter_out.wav",sample_rate)
+write_file_from_time_signal(mvdr_out[n_noise_only:],"./mldr_out.wav",sample_rate)
+
+
