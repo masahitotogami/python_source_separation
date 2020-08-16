@@ -289,9 +289,6 @@ freqs=np.arange(0,Nk,1)*sample_rate/N
 #音声と雑音との比率 [dB]
 SNR=90.
 
-#方位角の閾値
-azimuth_th=30.
-
 #部屋の大きさ
 room_dim = np.r_[10.0, 10.0, 10.0]
 
