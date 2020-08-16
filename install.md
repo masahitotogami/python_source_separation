@@ -9,7 +9,6 @@
     $pip install matplotlib
     $pip install sounddevice
     $pip install pyroomacoustics
-    $pip install itertools
     $pip install nara-wpe
 ```
     
