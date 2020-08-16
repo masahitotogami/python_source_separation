@@ -152,14 +152,7 @@ def execute_em_lgm(x,Ns=2,n_iterations=20):
 
     return(R,v,c_bar,cost_buff)
 
-# X#Yを計算
-def geometric_mean(X,Y):
 
-    invX=np.linalg.pinv(X)
-    invX_Y=np.matmul(invX,Y)
-    sqrt_invX_Y=scipy.linalg.sqrtm(invX_Y)
-    res=np.matmul(X,sqrt_invX_Y)
-    return(res)
 
 #IP法によるLGMのパラメータ推定法
 #x:入力信号( M, Nk, Lt)
