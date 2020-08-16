@@ -10,3 +10,4 @@
 * [最小分散無歪ビームフォーマMVDRを用いた雑音抑圧](section6/sample_code_c6_8.py)
 * [最小分散無歪ビームフォーマMVDRを用いた干渉音抑圧](section6/sample_code_c6_9.py)
 * [最ゆうビームフォーマ](section6/sample_code_c6_10.py)
+* [MaxSNRに基づく音源分離](section6/sample_code_c6_11.py)
