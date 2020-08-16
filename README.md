@@ -1,5 +1,8 @@
 ## Pythonで学ぶ音源分離（機械学習実践シリーズ）のソースコード
 
+![Python 3.6](https://img.shields.io/badge/Python-3.6-blue.svg)
+![License](https://img.shields.io/badge/Code%20License-MIT-blue.svg)
+
 本リポジトリでは、インプレス社機械学習実践シリーズの「Pythonで学ぶ音源分離」のサンプルコードを管理しています。
 なお、本ソースコードは、MITライセンスのもとで公開されています。LICENSE.txtを見てください。
 
