@@ -8,4 +8,5 @@
 * [指向特性を計算するソースコード](section6/sample_code_c6_6.py)
 * [指向特性を計算するソースコード(マイクロホンの数を変更）](section6/sample_code_c6_7.py)
 * [最小分散無歪ビームフォーマMVDRを用いた雑音抑圧のソースコード](section6/sample_code_c6_8.py)
-* [最ゆうビームフォーマのソースコード](section6/sample_code_c6_9.py)
+* [最小分散無歪ビームフォーマMVDRを用いた干渉音抑圧のソースコード](section6/sample_code_c6_9.py)
+* [最ゆうビームフォーマのソースコード](section6/sample_code_c6_10.py)
