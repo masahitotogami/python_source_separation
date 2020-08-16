@@ -1,11 +1,3 @@
-"""
-sample_code_c2_1.py
-
-Copyright (c) 2020 Masahito Togami
-
-This software is released under the MIT License.
-http://opensource.org/licenses/mit-license.php
-"""
 
 #wave形式の音声波形を読み込むためのモジュール(wave)をインポート
 import wave as wave
