@@ -6,5 +6,6 @@
 * [他の人の声が混入した際に、遅延和アレイにより音源分離するソースコード](section6/sample_code_c6_4.py)
 * [他の人の声が混入した際に、遅延和アレイにより音源分離（マイクロホンの数を変更）](section6/sample_code_c6_5.py)
 * [指向特性を計算するソースコード](section6/sample_code_c6_6.py)
-* [インパルス応答の取得と残響時間（RT60）の取得](section5/sample_code_c5_6.py)
-* [インパルス応答の取得と残響時間（RT60）の取得(残響の量を変更)](section5/sample_code_c5_7.py)
+* [指向特性を計算するソースコード(マイクロホンの数を変更）](section6/sample_code_c6_7.py)
+* [最小分散無歪ビームフォーマMVDRを用いた雑音抑圧のソースコード](section6/sample_code_c6_8.py)
+* [最ゆうビームフォーマにおける、共分散行列計算法のソースコード](section6/sample_code_c6_9.py)
