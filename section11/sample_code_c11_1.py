@@ -152,15 +152,6 @@ def execute_em_lgm(x,Ns=2,n_iterations=20):
 
     return(R,v,c_bar,cost_buff)
 
-# X#Yを計算
-def geometric_mean(X,Y):
-
-    invX=np.linalg.pinv(X)
-    invX_Y=np.matmul(invX,Y)
-    sqrt_invX_Y=scipy.linalg.sqrtm(invX_Y)
-    res=np.matmul(X,sqrt_invX_Y)
-    return(res)
-
 #IP法によるLGMのパラメータ推定法
 #x:入力信号( M, Nk, Lt)
 #Ns: 音源数
@@ -222,55 +213,6 @@ def execute_mm_lgm(x,Ns=2,n_iterations=20):
 
     return(R,v,c_bar,cost_buff)
 
-#IP法によるLGMのパラメータ推定法
-#x:入力信号( M, Nk, Lt)
-#Ns: 音源数
-#n_iterations: 繰り返しステップ数
-#return R 共分散行列(Nk,Ns,M,M) v 時間周波数分散(Nk,Ns,Lt),c_bar 音源分離信号(M,Ns,Nk,Lt), cost_buff コスト (T)
-def execute_mm_lgm2(x,Ns=2,n_iterations=20):
-    
-    #マイクロホン数・周波数・フレーム数を取得する
-    M=np.shape(x)[0]
-    Nk=np.shape(x)[1]
-    Lt=np.shape(x)[2]
-
-    #Rとvを初期化する
-    mask=np.random.uniform(size=Nk*Ns*Lt)
-    mask=np.reshape(mask,(Nk,Ns,Lt))
-    R=np.einsum("kst,mkt,nkt->kstmn",mask,x,np.conjugate(x))
-    R=np.average(R,axis=2)
-    v=np.random.uniform(size=Nk*Ns*Lt)
-    v=np.reshape(v,(Nk,Ns,Lt))
-
-    cost_buff=[]
-    for t in range(n_iterations):
-        
-        #入力信号の共分散行列を求める
-        vR=np.einsum("kst,ksmn->kstmn",v,R)
-        V=np.sum(vR,axis=1)
-        V_inverse=np.linalg.pinv(V)
-
-        #コスト計算
-        cost=np.sum(np.einsum("mkt,ktmn,nkt->kt",np.conjugate(x),V_inverse,x) +np.log(np.abs(np.linalg.det(V))))
-        cost/=np.float(Lt)
-        cost=np.real(cost)
-        cost_buff.append(cost)
-        print(t,cost)
-        #パラメータを更新
-        R=UpdateR_geometric_mean(x,R,v)
-        v=updateV(x,R,v)
-
-       
-       
-    vR=np.einsum("kst,ksmn->kstmn",v,R)
-    V=np.sum(vR,axis=1)
-    V_inverse=np.linalg.pinv(V)
-    Wmwf=np.einsum("kstmi,ktin->kstmn",vR,V_inverse)
-
-    #音源分離信号を得る
-    c_bar=np.einsum('kstmn,nkt->mskt',Wmwf,x)
-
-    return(R,v,c_bar,cost_buff)
 #IP法による分離フィルタ更新
 #x:入力信号( M, Nk, Lt)
 #W: 分離フィルタ(Nk,M,M)
