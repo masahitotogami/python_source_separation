@@ -169,7 +169,6 @@ source_locations[2, :] = np.cos(doas[:, 0])
 source_locations *= distance
 source_locations += mic_array_loc[:, None]
 
-print(np.shape(clean_data))
 #各音源をシミュレーションに追加する
 for s in range(n_sources):
     clean_data[s]/= np.std(clean_data[s])
@@ -183,7 +182,7 @@ multi_conv_data=room.mic_array.signals
 
 
 #畳み込んだ波形をファイルに書き込む
-write_file_from_time_signal(multi_conv_data[0]*np.iinfo(np.int16).max/20.,"./mvdr_inter_in.wav",sample_rate)
+write_file_from_time_signal(multi_conv_data[0]*np.iinfo(np.int16).max/20.,"./mvdr_interference_in.wav",sample_rate)
 
 #Near仮定に基づくステアリングベクトルを計算: steering_vectors(Nk x Ns x M)
 near_steering_vectors=calculate_steering_vector(R,source_locations[:,:1],freqs,is_use_far=False)
@@ -215,4 +214,4 @@ t,mvdr_out=sp.istft(c_hat[0],fs=sample_rate,window="hann",nperseg=N)
 mvdr_out=mvdr_out*np.iinfo(np.int16).max/20.
 
 #ファイルに書き込む
-write_file_from_time_signal(mvdr_out,"./mvdr_inter_out.wav",sample_rate)
+write_file_from_time_signal(mvdr_out,"./mvdr_interference_out.wav",sample_rate)
