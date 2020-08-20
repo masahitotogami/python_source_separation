@@ -286,7 +286,6 @@ x_dereverb_wpe,cost_buff_wpe=dereverberation_wpe(stft_data,x_bar,n_wpe_iteration
 
 t,x_dereverb_ls=sp.istft(x_dereverb_ls,fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
 t,x_dereverb_wpe=sp.istft(x_dereverb_wpe,fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
-t,x_dereverb_wpe2=sp.istft(x_dereverb_wpe2,fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
 
 snr_pre=calculate_snr(multi_conv_data_no_reverb[0,...],multi_conv_data[0,...])
 snr_ls_post=calculate_snr(multi_conv_data_no_reverb[0,...],x_dereverb_ls)
