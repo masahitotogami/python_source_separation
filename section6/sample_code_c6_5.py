@@ -181,7 +181,7 @@ multi_conv_data=room.mic_array.signals
 
 
 #畳み込んだ波形をファイルに書き込む
-write_file_from_time_signal(multi_conv_data[0]*np.iinfo(np.int16).max/20.,"./ds_inter_in_m32.wav",sample_rate)
+write_file_from_time_signal(multi_conv_data[0]*np.iinfo(np.int16).max/20.,"./ds_interference_in_m32.wav",sample_rate)
 
 #Near仮定に基づくステアリングベクトルを計算: steering_vectors(Nk x Ns x M)
 near_steering_vectors=calculate_steering_vector(R,source_locations[:,:1],freqs,is_use_far=False)
@@ -202,6 +202,6 @@ t,ds_out=sp.istft(c_hat[0],fs=sample_rate,window="hann",nperseg=N)
 ds_out=ds_out*np.iinfo(np.int16).max/20.
 
 #ファイルに書き込む
-write_file_from_time_signal(ds_out,"./ds_inter_out_m32.wav",sample_rate)
+write_file_from_time_signal(ds_out,"./ds_interference_out_m32.wav",sample_rate)
 
 
