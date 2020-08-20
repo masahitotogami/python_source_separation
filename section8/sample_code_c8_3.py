@@ -439,7 +439,7 @@ f,t,stft_data=sp.stft(multi_conv_data,fs=sample_rate,window="hann",nperseg=N)
 n_ica_iterations=50
 
 #ILRMAの基底数
-n_basis=4
+n_basis=2
 
 #処理するフレーm数
 Lt=np.shape(stft_data)[-1]
