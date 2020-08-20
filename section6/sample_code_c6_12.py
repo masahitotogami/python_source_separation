@@ -173,7 +173,6 @@ source_locations[2, :] = np.cos(doas[:, 0])
 source_locations *= distance
 source_locations += mic_array_loc[:, None]
 
-print(np.shape(clean_data))
 #各音源をシミュレーションに追加する
 for s in range(n_sources):
     clean_data[s]/= np.std(clean_data[s])
