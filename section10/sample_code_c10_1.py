@@ -205,7 +205,7 @@ def execute_mm_lgm_dereverb(x,x_bar,Ns=2,n_iterations=20):
         cost/=np.float(Lt)
         cost=np.real(cost)
         cost_buff.append(cost)
-        print(t,cost)
+        #print(t,cost)
         #パラメータを更新
         
         #Rの更新
@@ -350,7 +350,7 @@ def execute_ip_time_varying_gaussian_ilrma_t(x,x_bar,P,a,b,n_iterations=20):
         #コスト計算
         cost=np.sum(np.mean(s_power/np.maximum(v,1.e-18)+np.log(v),axis=-1)) -np.sum(2.*np.log(np.abs(np.linalg.det(P[:,:,:M])) ))
         cost_buff.append(cost)
-        print(t,cost)
+        #print(t,cost)
 
 
     s_hat=np.einsum('kmj,jkt->mkt',P,x_hat)
@@ -427,7 +427,7 @@ def execute_ip_time_varying_gaussian_ilrma_dereverb(x,x_bar,W,a,b,n_iterations=2
         #コスト計算
         cost=np.sum(np.mean(s_power/np.maximum(v,1.e-18)+np.log(v),axis=-1)) -np.sum(2.*np.log(np.abs(np.linalg.det(W)) ))
         cost_buff.append(cost)
-        print(t,cost)
+        #print(t,cost)
 
         #IP法による更新
         Q=np.einsum('skt,mkt,nkt->tksmn',1./np.maximum(v,1.e-18),x_dereverb,np.conjugate(x_dereverb))
@@ -810,20 +810,20 @@ snr_lgm_mm_dereverb_post=np.maximum(snr_lgm_mm_dereverb_post1,snr_lgm_mm_derever
 snr_lgm_mm_dereverb_post/=2.
 
 
-write_file_from_time_signal(y_ilrma_ip[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_left.wav",sample_rate)
-write_file_from_time_signal(y_ilrma_ip[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_right.wav",sample_rate)
+write_file_from_time_signal(y_ilrma_ip[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_1.wav",sample_rate)
+write_file_from_time_signal(y_ilrma_ip[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_2.wav",sample_rate)
 
-write_file_from_time_signal(y_ilrma_dereverb_ip[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_dereverb_ip_left.wav",sample_rate)
-write_file_from_time_signal(y_ilrma_dereverb_ip[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_dereverb_ip_right.wav",sample_rate)
+write_file_from_time_signal(y_ilrma_dereverb_ip[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_dereverb_ip_1.wav",sample_rate)
+write_file_from_time_signal(y_ilrma_dereverb_ip[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_dereverb_ip_2.wav",sample_rate)
 
-write_file_from_time_signal(y_ilrma_t[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_t_left.wav",sample_rate)
-write_file_from_time_signal(y_ilrma_t[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_t_right.wav",sample_rate)
+write_file_from_time_signal(y_ilrma_t[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_t_1.wav",sample_rate)
+write_file_from_time_signal(y_ilrma_t[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_t_2.wav",sample_rate)
 
-write_file_from_time_signal(y_lgm_mm[0,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_left.wav",sample_rate)
-write_file_from_time_signal(y_lgm_mm[1,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_right.wav",sample_rate)
+write_file_from_time_signal(y_lgm_mm[0,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_1.wav",sample_rate)
+write_file_from_time_signal(y_lgm_mm[1,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_2.wav",sample_rate)
 
-write_file_from_time_signal(y_lgm_mm_dereverb[0,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_dereverb_left.wav",sample_rate)
-write_file_from_time_signal(y_lgm_mm_dereverb[1,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_dereverb_right.wav",sample_rate)
+write_file_from_time_signal(y_lgm_mm_dereverb[0,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_dereverb_1.wav",sample_rate)
+write_file_from_time_signal(y_lgm_mm_dereverb[1,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_dereverb_2.wav",sample_rate)
 
 
 print("method:    ", "ILRMA", "ILRMA-Dereverb","ILRMA-T","LGM-MM","LGM-Dereverb-MM")
