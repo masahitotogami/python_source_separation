@@ -10,8 +10,6 @@ import scipy as scipy
 import itertools
 import time
 
-import nara_wpe.wpe as wpe
-
 
 
 #x:入力信号( M, Nk, Lt)
@@ -284,11 +282,6 @@ x_dereverb_ls=dereverberation_ls(stft_data,x_bar)
 #WPEで残響除去
 x_dereverb_wpe,cost_buff_wpe=dereverberation_wpe(stft_data,x_bar,n_wpe_iterations)
 
-#nara WPEで残響除去
-Z=wpe.wpe(np.transpose(stft_data,(1,0,2)),taps=Lh,delay=D,iterations=n_wpe_iterations)
-x_dereverb_wpe2=np.transpose(Z,(1,0,2))[0,...]
-
-
 #x:入力信号( M, Nk, Lt)
 
 t,x_dereverb_ls=sp.istft(x_dereverb_ls,fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
@@ -298,18 +291,16 @@ t,x_dereverb_wpe2=sp.istft(x_dereverb_wpe2,fs=sample_rate,window="hann",nperseg=
 snr_pre=calculate_snr(multi_conv_data_no_reverb[0,...],multi_conv_data[0,...])
 snr_ls_post=calculate_snr(multi_conv_data_no_reverb[0,...],x_dereverb_ls)
 snr_wpe_post=calculate_snr(multi_conv_data_no_reverb[0,...],x_dereverb_wpe)
-snr_wpe_post2=calculate_snr(multi_conv_data_no_reverb[0,...],x_dereverb_wpe2)
 
 write_file_from_time_signal(x_dereverb_ls[:wave_len]*np.iinfo(np.int16).max/20.,"./dereverb_ls_{}_{}.wav".format(Lh,D),sample_rate)
 write_file_from_time_signal(x_dereverb_wpe[:wave_len]*np.iinfo(np.int16).max/20.,"./dereverb_wpe_{}_{}.wav".format(Lh,D),sample_rate)
-write_file_from_time_signal(x_dereverb_wpe2[:wave_len]*np.iinfo(np.int16).max/20.,"./dereverb_wpe2.wav",sample_rate)
 
 
 
 print("method:    ", "LS","WPE")
-print("Δsnr [dB]: {:.2f}  {:.2f} {:.2f}".format(snr_ls_post-snr_pre,snr_wpe_post-snr_pre,snr_wpe_post2-snr_pre))
+print("Δsnr [dB]: {:.2f}  {:.2f} {:.2f}".format(snr_ls_post-snr_pre,snr_wpe_post-snr_pre))
 
 #コストの値を表示
-for t in range(n_wpe_iterations):
-    print(t,cost_buff_wpe[t])
+#for t in range(n_wpe_iterations):
+#    print(t,cost_buff_wpe[t])
 
