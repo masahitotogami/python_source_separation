@@ -6,8 +6,6 @@ import numpy as np
 import scipy.signal as sp
 import scipy as scipy
 
-#順列計算に使用
-import itertools
 import time
 
 import nara_wpe.wpe as wpe
