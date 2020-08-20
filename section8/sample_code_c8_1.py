@@ -347,8 +347,8 @@ snr_ica_post2=calculate_snr(multi_conv_data_left_no_noise[0,...],y_ica[1,...])+c
 snr_ica_post=np.maximum(snr_ica_post1,snr_ica_post2)
 snr_ica_post/=2.
 
-write_file_from_time_signal(y_ica[0,...]*np.iinfo(np.int16).max/20.,"./ica_left.wav",sample_rate)
-write_file_from_time_signal(y_ica[1,...]*np.iinfo(np.int16).max/20.,"./ica_right.wav",sample_rate)
+write_file_from_time_signal(y_ica[0,...]*np.iinfo(np.int16).max/20.,"./ica_1.wav",sample_rate)
+write_file_from_time_signal(y_ica[1,...]*np.iinfo(np.int16).max/20.,"./ica_2.wav",sample_rate)
 
 
 print("method:    ", "ICA")
