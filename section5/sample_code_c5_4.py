@@ -103,7 +103,7 @@ for m in range(n_channels):
     conv_data=multi_conv_data[m,:]
     data_scale_adjust=conv_data*np.iinfo(np.int16).max/20.
     data_scale_adjust=data_scale_adjust.astype(np.int16)
-    wave_out=wave.open("./noise_reverb_conv_out_{}.wav".format(m),"w")
+    wave_out=wave.open("./reverb_conv_out_{}.wav".format(m),"w")
     wave_out.setnchannels(1)
     wave_out.setsampwidth(2)
     wave_out.setframerate(sample_rate)
