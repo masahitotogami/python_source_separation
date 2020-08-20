@@ -517,17 +517,17 @@ snr_ilrma_ip_post2=calculate_snr(multi_conv_data_left_no_noise[0,...],y_ilrma_ip
 snr_ilrma_ip_post=np.maximum(snr_ilrma_ip_post1,snr_ilrma_ip_post2)
 snr_ilrma_ip_post/=2.
 
-write_file_from_time_signal(y_ica[0,...]*np.iinfo(np.int16).max/20.,"./ica_left.wav",sample_rate)
-write_file_from_time_signal(y_ica[1,...]*np.iinfo(np.int16).max/20.,"./ica_right.wav",sample_rate)
+write_file_from_time_signal(y_ica[0,...]*np.iinfo(np.int16).max/20.,"./ica_1.wav",sample_rate)
+write_file_from_time_signal(y_ica[1,...]*np.iinfo(np.int16).max/20.,"./ica_2.wav",sample_rate)
 
-write_file_from_time_signal(y_iva[0,...]*np.iinfo(np.int16).max/20.,"./iva_left.wav",sample_rate)
-write_file_from_time_signal(y_iva[1,...]*np.iinfo(np.int16).max/20.,"./iva_right.wav",sample_rate)
+write_file_from_time_signal(y_iva[0,...]*np.iinfo(np.int16).max/20.,"./iva_1.wav",sample_rate)
+write_file_from_time_signal(y_iva[1,...]*np.iinfo(np.int16).max/20.,"./iva_2.wav",sample_rate)
 
-write_file_from_time_signal(y_iva_ip[0,...]*np.iinfo(np.int16).max/20.,"./iva_ip_left.wav",sample_rate)
-write_file_from_time_signal(y_iva_ip[1,...]*np.iinfo(np.int16).max/20.,"./iva_ip_right.wav",sample_rate)
+write_file_from_time_signal(y_iva_ip[0,...]*np.iinfo(np.int16).max/20.,"./iva_ip_1.wav",sample_rate)
+write_file_from_time_signal(y_iva_ip[1,...]*np.iinfo(np.int16).max/20.,"./iva_ip_2.wav",sample_rate)
 
-write_file_from_time_signal(y_ilrma_ip[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_left.wav",sample_rate)
-write_file_from_time_signal(y_ilrma_ip[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_right.wav",sample_rate)
+write_file_from_time_signal(y_ilrma_ip[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_1.wav",sample_rate)
+write_file_from_time_signal(y_ilrma_ip[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_2.wav",sample_rate)
 
 
 print("method:    ", "NG-ICA", "NG-IVA", "AuxIVA", "ILRMA")
