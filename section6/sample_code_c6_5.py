@@ -137,9 +137,9 @@ mic_array_loc = room_dim / 2 + np.random.randn(3) * 0.1
 #マイクロホンアレイのマイク配置
 #マイクロホンアレイのマイク配置
 mic_alignments = np.array(
-    [
+    
         [[x,0.0,0.0] for x in np.arange(-0.31,0.32,0.02)]
-    ]
+    
 )
 #マイクロホン数
 n_channels=np.shape(mic_alignments)[0]
