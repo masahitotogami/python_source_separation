@@ -706,33 +706,33 @@ snr_lgm_em_post=np.maximum(snr_lgm_em_post1,snr_lgm_em_post2)
 snr_lgm_em_post/=2.
 
 
-write_file_from_time_signal(y_ica[0,...]*np.iinfo(np.int16).max/20.,"./ica_left.wav",sample_rate)
-write_file_from_time_signal(y_ica[1,...]*np.iinfo(np.int16).max/20.,"./ica_right.wav",sample_rate)
+write_file_from_time_signal(y_ica[0,...]*np.iinfo(np.int16).max/20.,"./ica_1.wav",sample_rate)
+write_file_from_time_signal(y_ica[1,...]*np.iinfo(np.int16).max/20.,"./ica_2.wav",sample_rate)
 
-write_file_from_time_signal(y_pa_auxiva[0,...]*np.iinfo(np.int16).max/20.,"./pa_auxiva_left.wav",sample_rate)
-write_file_from_time_signal(y_pa_auxiva[1,...]*np.iinfo(np.int16).max/20.,"./pa_auxiva_right.wav",sample_rate)
+write_file_from_time_signal(y_pa_auxiva[0,...]*np.iinfo(np.int16).max/20.,"./pa_auxiva_1.wav",sample_rate)
+write_file_from_time_signal(y_pa_auxiva[1,...]*np.iinfo(np.int16).max/20.,"./pa_auxiva_2.wav",sample_rate)
 
-write_file_from_time_signal(y_pa_ilrma[0,...]*np.iinfo(np.int16).max/20.,"./pa_ilrma_left.wav",sample_rate)
-write_file_from_time_signal(y_pa_ilrma[1,...]*np.iinfo(np.int16).max/20.,"./pa_ilrma_right.wav",sample_rate)
+write_file_from_time_signal(y_pa_ilrma[0,...]*np.iinfo(np.int16).max/20.,"./pa_ilrma_1.wav",sample_rate)
+write_file_from_time_signal(y_pa_ilrma[1,...]*np.iinfo(np.int16).max/20.,"./pa_ilrma_2.wav",sample_rate)
 
-write_file_from_time_signal(y_pa_fastmnmf[0,...]*np.iinfo(np.int16).max/20.,"./pa_fastmnmf_left.wav",sample_rate)
-write_file_from_time_signal(y_pa_fastmnmf[1,...]*np.iinfo(np.int16).max/20.,"./pa_fastmnmf_right.wav",sample_rate)
+write_file_from_time_signal(y_pa_fastmnmf[0,...]*np.iinfo(np.int16).max/20.,"./pa_fastmnmf_1.wav",sample_rate)
+write_file_from_time_signal(y_pa_fastmnmf[1,...]*np.iinfo(np.int16).max/20.,"./pa_fastmnmf_2.wav",sample_rate)
 
 
-write_file_from_time_signal(y_iva[0,...]*np.iinfo(np.int16).max/20.,"./iva_left.wav",sample_rate)
-write_file_from_time_signal(y_iva[1,...]*np.iinfo(np.int16).max/20.,"./iva_right.wav",sample_rate)
+write_file_from_time_signal(y_iva[0,...]*np.iinfo(np.int16).max/20.,"./iva_1.wav",sample_rate)
+write_file_from_time_signal(y_iva[1,...]*np.iinfo(np.int16).max/20.,"./iva_2.wav",sample_rate)
 
-write_file_from_time_signal(y_iva_ip[0,...]*np.iinfo(np.int16).max/20.,"./iva_ip_left.wav",sample_rate)
-write_file_from_time_signal(y_iva_ip[1,...]*np.iinfo(np.int16).max/20.,"./iva_ip_right.wav",sample_rate)
+write_file_from_time_signal(y_iva_ip[0,...]*np.iinfo(np.int16).max/20.,"./iva_ip_1.wav",sample_rate)
+write_file_from_time_signal(y_iva_ip[1,...]*np.iinfo(np.int16).max/20.,"./iva_ip_2.wav",sample_rate)
 
-write_file_from_time_signal(y_ilrma_ip[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_left.wav",sample_rate)
-write_file_from_time_signal(y_ilrma_ip[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_right.wav",sample_rate)
+write_file_from_time_signal(y_ilrma_ip[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_1.wav",sample_rate)
+write_file_from_time_signal(y_ilrma_ip[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_2.wav",sample_rate)
 
-write_file_from_time_signal(y_lgm_em[0,...]*np.iinfo(np.int16).max/20.,"./lgm_em_left.wav",sample_rate)
-write_file_from_time_signal(y_lgm_em[1,...]*np.iinfo(np.int16).max/20.,"./lgm_em_right.wav",sample_rate)
+write_file_from_time_signal(y_lgm_em[0,...]*np.iinfo(np.int16).max/20.,"./lgm_em_1.wav",sample_rate)
+write_file_from_time_signal(y_lgm_em[1,...]*np.iinfo(np.int16).max/20.,"./lgm_em_2.wav",sample_rate)
 
-write_file_from_time_signal(y_lgm_mm[0,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_left.wav",sample_rate)
-write_file_from_time_signal(y_lgm_mm[1,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_right.wav",sample_rate)
+write_file_from_time_signal(y_lgm_mm[0,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_1.wav",sample_rate)
+write_file_from_time_signal(y_lgm_mm[1,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_2.wav",sample_rate)
 
 
 print("method:    ", "PA-AUXIVA","PA-ILRMA","PA-FASTMNMF","NG-ICA", "NG-IVA", "AuxIVA", "ILRMA","LGM-EM","LGM-MM")
