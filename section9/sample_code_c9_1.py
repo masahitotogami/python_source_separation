@@ -297,7 +297,7 @@ write_file_from_time_signal(x_dereverb_wpe[:wave_len]*np.iinfo(np.int16).max/20.
 
 
 print("method:    ", "LS","WPE")
-print("Δsnr [dB]: {:.2f}  {:.2f} {:.2f}".format(snr_ls_post-snr_pre,snr_wpe_post-snr_pre))
+print("Δsnr [dB]: {:.2f}  {:.2f}".format(snr_ls_post-snr_pre,snr_wpe_post-snr_pre))
 
 #コストの値を表示
 #for t in range(n_wpe_iterations):
