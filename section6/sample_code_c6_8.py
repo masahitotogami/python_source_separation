@@ -181,7 +181,7 @@ multi_conv_data=room.mic_array.signals
 
 
 #畳み込んだ波形をファイルに書き込む
-write_file_from_time_signal(multi_conv_data[0]*np.iinfo(np.int16).max/20.,"./mix_in.wav",sample_rate)
+write_file_from_time_signal(multi_conv_data[0]*np.iinfo(np.int16).max/20.,"./mvdr_in.wav",sample_rate)
 
 #Near仮定に基づくステアリングベクトルを計算: steering_vectors(Nk x Ns x M)
 near_steering_vectors=calculate_steering_vector(R,source_locations,freqs,is_use_far=False)
