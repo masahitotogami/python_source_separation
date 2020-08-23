@@ -37,50 +37,6 @@ def make_x_bar(x,D,Lh):
 
     return(x_bar)
 
-
-#コントラスト関数の微分（球対称多次元ラプラス分布を仮定）
-#s_hat: 分離信号(M, Nk, Lt)
-def phi_multivariate_laplacian(s_hat):
-
-    power=np.square(np.abs(s_hat))
-    norm=np.sqrt(np.sum(power,axis=1,keepdims=True))
-
-    phi=s_hat/np.maximum(norm,1.e-18)
-    return(phi)
-
-#コントラスト関数の微分（球対称ラプラス分布を仮定）
-#s_hat: 分離信号(M, Nk, Lt)
-def phi_laplacian(s_hat):
-
-    norm=np.abs(s_hat)
-    phi=s_hat/np.maximum(norm,1.e-18)
-    return(phi)
-
-#コントラスト関数（球対称ラプラス分布を仮定）
-#s_hat: 分離信号(M, Nk, Lt)
-def contrast_laplacian(s_hat):
-
-    norm=2.*np.abs(s_hat)
-    
-    return(norm)
-
-#コントラスト関数（球対称多次元ラプラス分布を仮定）
-#s_hat: 分離信号(M, Nk, Lt)
-def contrast_multivariate_laplacian(s_hat):
-    power=np.square(np.abs(s_hat))
-    norm=2.*np.sqrt(np.sum(power,axis=1,keepdims=True))
-  
-    return(norm)
-
-# X#Yを計算
-def geometric_mean(X,Y):
-
-    invX=np.linalg.pinv(X)
-    invX_Y=np.matmul(invX,Y)
-    sqrt_invX_Y=scipy.linalg.sqrtm(invX_Y)
-    res=np.matmul(X,sqrt_invX_Y)
-    return(res)
-
 #IP法によるLGMのパラメータ推定法
 #x:入力信号( M, Nk, Lt)
 #Ns: 音源数
@@ -233,219 +189,6 @@ def execute_mm_lgm_dereverb(x,x_bar,Ns=2,n_iterations=20):
 
     return(R,v,c_bar,cost_buff)
 
-
-#IP法による分離フィルタ更新
-#x:入力信号( M, Nk, Lt)
-#W: 分離フィルタ(Nk,M,M)
-#a: アクティビティ(B,M,Lt)
-#b: 基底(Nk,M,B)
-#n_iterations: 繰り返しステップ数
-#return W 分離フィルタ(Nk,M,M) s_hat 出力信号(M,Nk, Lt),cost_buff コスト (T)
-def execute_ip_time_varying_gaussian_ilrma(x,W,a,b,n_iterations=20):
-    
-    #マイクロホン数・周波数・フレーム数を取得する
-    M=np.shape(x)[0]
-    Nk=np.shape(x)[1]
-    Lt=np.shape(x)[2]
-
-    cost_buff=[]
-    for t in range(n_iterations):
-        
-        #音源分離信号を得る
-        s_hat=np.einsum('kmn,nkt->mkt',W,x)
-        s_power=np.square(np.abs(s_hat)) 
-
-        #時間周波数分散を更新
-        v=np.einsum("bst,ksb->skt",a,b)
-
-        #アクティビティの更新
-        a=a*np.sqrt(np.einsum("ksb,skt->bst",b,s_power/np.maximum(v,1.e-18)**2)/np.einsum("ksb,skt->bst",b,1./np.maximum(v,1.e-18)))
-        
-        #基底の更新
-        b=b*np.sqrt(np.einsum("bst,skt->ksb",a,s_power /np.maximum(v,1.e-18)**2) /np.einsum("bst,skt->ksb",a,1./np.maximum(v,1.e-18)))
-        
-        #時間周波数分散を再度更新
-        v=np.einsum("bst,ksb->skt",a,b)
-
-        #コスト計算
-        cost=np.sum(np.mean(s_power/np.maximum(v,1.e-18)+np.log(v),axis=-1)) -np.sum(2.*np.log(np.abs(np.linalg.det(W)) ))
-        cost_buff.append(cost)
-
-        #IP法による更新
-        Q=np.einsum('skt,mkt,nkt->tksmn',1./np.maximum(v,1.e-18),x,np.conjugate(x))
-        Q=np.average(Q,axis=0)
-        
-        for source_index in range(M):
-            WQ=np.einsum('kmi,kin->kmn',W,Q[:,source_index,:,:])
-            invWQ=np.linalg.pinv(WQ)
-            W[:,source_index,:]=np.conjugate(invWQ[:,:,source_index])
-            wVw=np.einsum('km,kmn,kn->k',W[:,source_index,:],Q[:,source_index,:,:],np.conjugate(W[:,source_index,:]))
-            wVw=np.sqrt(np.abs(wVw))
-            W[:,source_index,:]=W[:,source_index,:]/np.maximum(wVw[:,None],1.e-18)
-
- 
-    s_hat=np.einsum('kmn,nkt->mkt',W,x)
-
-    return(W,s_hat,cost_buff)
-
-#IP法による分離フィルタ更新
-#x:入力信号( M, Nk, Lt)
-#x_bar:過去のマイク入力信号(Lh,M, Nk, Lt)
-#P: 音源分離・残響除去フィルタ(Nk,M,(Lh+1)*M)
-#a: アクティビティ(B,M,Lt)
-#b: 基底(Nk,M,B)
-#n_iterations: 繰り返しステップ数
-#return W 分離フィルタ(Nk,M,M) s_hat 出力信号(M,Nk, Lt),cost_buff コスト (T)
-def execute_ip_time_varying_gaussian_ilrma_t(x,x_bar,P,a,b,n_iterations=20):
-    
-    
-    #マイクロホン数・周波数・フレーム数を取得する
-    M=np.shape(x)[0]
-    Nk=np.shape(x)[1]
-    Lt=np.shape(x)[2]
-    Lh=np.shape(x_bar)[0]
-    
-    x_bar=np.reshape(x_bar,[Lh*M,Nk,Lt])
-    x_hat=np.concatenate((x,x_bar),axis=0)
-
-    #共分散行列を計算
-    x_hat_x_hat_H=np.einsum('ikt,jkt->ktij',x_hat,np.conjugate(x_hat))
-
-    cost_buff=[]
-    for t in range(n_iterations):
-
-        #時間周波数分散を更新
-        v=np.einsum("bst,ksb->skt",a,b)
-        
-        #音源分離と残響除去を行う
-        s_hat=np.einsum('kmj,jkt->mkt',P,x_hat)
-        s_power=np.square(np.abs(s_hat)) 
-
-        #アクティビティの更新
-        a=a*np.sqrt(np.einsum("ksb,skt->bst",b,s_power/np.maximum(v,1.e-18)**2)/np.einsum("ksb,skt->bst",b,1./np.maximum(v,1.e-18)))
-        
-        #基底の更新
-        b=b*np.sqrt(np.einsum("bst,skt->ksb",a,s_power /np.maximum(v,1.e-18)**2) /np.einsum("bst,skt->ksb",a,1./np.maximum(v,1.e-18)))
-        
-        #時間周波数分散を再度更新
-        v=np.einsum("bst,ksb->skt",a,b)
-        
-        #共分散行列を算出
-        Q=np.einsum("skt,ktij->tksij",1./np.maximum(v,1.e-18),x_hat_x_hat_H)
-        Q=np.average(Q,axis=0)
-        Q_inverse=np.linalg.pinv(Q)
-
-        for source_index in range(M):            
-            P0=P[:,:,:M]
-            P0_inverse=np.linalg.pinv(P0)
-
-            #ステアリングベクトル
-            b_steering=P0_inverse[:,:,source_index] 
-            
-            b_h_Q_inverse_b=np.einsum("km,kmn,kn->k",np.conjugate(b_steering),Q_inverse[:,source_index,:M,:M],b_steering)
-            Q_inverse_b=np.einsum("kmn,kn->km",Q_inverse[:,source_index,:,:M],b_steering)
-            p=np.einsum("km,k->km",Q_inverse_b,1./np.sqrt(np.maximum(np.abs(b_h_Q_inverse_b),1.e-18)))
-            P[:,source_index,:]=np.conjugate(p)
-        
-        #コスト計算
-        cost=np.sum(np.mean(s_power/np.maximum(v,1.e-18)+np.log(v),axis=-1)) -np.sum(2.*np.log(np.abs(np.linalg.det(P[:,:,:M])) ))
-        cost_buff.append(cost)
-        #print(t,cost)
-
-
-    s_hat=np.einsum('kmj,jkt->mkt',P,x_hat)
-    W=P[:,:,:M]
-    return(W,s_hat,cost_buff)
-
-
-#IP法による分離フィルタ更新
-#x:入力信号( M, Nk, Lt)
-#x_bar:過去のマイク入力信号(Lh,M, Nk, Lt)
-#W: 分離フィルタ(Nk,M,M)
-#a: アクティビティ(B,M,Lt)
-#b: 基底(Nk,M,B)
-#n_iterations: 繰り返しステップ数
-#return W 分離フィルタ(Nk,M,M) s_hat 出力信号(M,Nk, Lt),cost_buff コスト (T)
-def execute_ip_time_varying_gaussian_ilrma_dereverb(x,x_bar,W,a,b,n_iterations=20):
-
-    #マイクロホン数・周波数・フレーム数を取得する
-    M=np.shape(x)[0]
-    Nk=np.shape(x)[1]
-    Lt=np.shape(x)[2]
-    Lh=np.shape(x_bar)[0]
-    
-    x_bar=np.reshape(x_bar,[Lh*M,Nk,Lt])
-
-    #共分散行列を計算
-    x_bar_x_bar_H=np.einsum('ikt,jkt->ktij',x_bar,np.conjugate(x_bar))
-
-    #相関行列を計算
-    x_bar_x_H=np.einsum('ikt,mkt->ktim',x_bar,np.conjugate(x))
-
-
-    cost_buff=[]
-    for t in range(n_iterations):
-
-        #時間周波数分散を更新
-        v=np.einsum("bst,ksb->skt",a,b)
-        
-        #入力信号の共分散行列を求める
-        V_inverse=np.einsum("skt,ksm,ksn->ktmn",1./np.maximum(v,1.e-18),np.conjugate(W),W)
-        
-       
-        #残響除去フィルタを求める
-        x_barx_H_V_inv=np.einsum("ktim,ktmn->kin",x_bar_x_H,V_inverse)
-
-        vec_x_bar_x_HV_inv=np.reshape(np.transpose(x_barx_H_V_inv,[0,2,1]),(Nk,Lh*M*M))
-        
-        #多次元配列対応版のクロネッカー積
-        V_inverse_x_x_H=batch_kron(np.transpose(V_inverse,(0,1,3,2)),x_bar_x_bar_H)
-
-        #vecHを求める
-        vec_h=np.einsum("kmr,kr->km",np.linalg.inv(np.sum(V_inverse_x_x_H,axis=1)), vec_x_bar_x_HV_inv)
-        
-        #行列に戻す
-        h=np.transpose(np.reshape(vec_h,(Nk,M,Lh*M)),(0,2,1))
-
-        #残響除去を行う
-        x_reverb=np.einsum('kjm,jkt->mkt',np.conjugate(h),x_bar)
-        x_dereverb=x-x_reverb
-        
-        #音源分離信号を得る
-        s_hat=np.einsum('kmn,nkt->mkt',W,x_dereverb)
-        s_power=np.square(np.abs(s_hat)) 
-
-        #アクティビティの更新
-        a=a*np.sqrt(np.einsum("ksb,skt->bst",b,s_power/np.maximum(v,1.e-18)**2)/np.einsum("ksb,skt->bst",b,1./np.maximum(v,1.e-18)))
-        
-        #基底の更新
-        b=b*np.sqrt(np.einsum("bst,skt->ksb",a,s_power /np.maximum(v,1.e-18)**2) /np.einsum("bst,skt->ksb",a,1./np.maximum(v,1.e-18)))
-        
-        #時間周波数分散を再度更新
-        v=np.einsum("bst,ksb->skt",a,b)
-
-        #コスト計算
-        cost=np.sum(np.mean(s_power/np.maximum(v,1.e-18)+np.log(v),axis=-1)) -np.sum(2.*np.log(np.abs(np.linalg.det(W)) ))
-        cost_buff.append(cost)
-        #print(t,cost)
-
-        #IP法による更新
-        Q=np.einsum('skt,mkt,nkt->tksmn',1./np.maximum(v,1.e-18),x_dereverb,np.conjugate(x_dereverb))
-        Q=np.average(Q,axis=0)
-        
-        for source_index in range(M):
-            WQ=np.einsum('kmi,kin->kmn',W,Q[:,source_index,:,:])
-            invWQ=np.linalg.pinv(WQ)
-            W[:,source_index,:]=np.conjugate(invWQ[:,:,source_index])
-            wVw=np.einsum('km,kmn,kn->k',W[:,source_index,:],Q[:,source_index,:,:],np.conjugate(W[:,source_index,:]))
-            wVw=np.sqrt(np.abs(wVw))
-            W[:,source_index,:]=W[:,source_index,:]/np.maximum(wVw[:,None],1.e-18)
-
- 
-    s_hat=np.einsum('kmn,nkt->mkt',W,x_dereverb)
-
-    return(W,s_hat,cost_buff)
-
 #周波数間の振幅相関に基づくパーミュテーション解法
 #s_hat: M,Nk,Lt
 #return permutation_index_result：周波数毎のパーミュテーション解 
@@ -495,18 +238,6 @@ def solver_inter_frequency_permutation(s_hat):
    
     return(permutation_index_result)
     
-#プロジェクションバックで最終的な出力信号を求める
-#s_hat: M,Nk,Lt
-#W: 分離フィルタ(Nk,M,M)
-#retunr c_hat: マイクロホン位置での分離結果(M,M,Nk,Lt)
-def projection_back(s_hat,W):
-    
-    #ステアリングベクトルを推定
-    A=np.linalg.pinv(W)
-    c_hat=np.einsum('kmi,ikt->mikt',A,s_hat)
-    return(c_hat)
-
-
 #2バイトに変換してファイルに保存
 #signal: time-domain 1d array (float)
 #file_name: 出力先のファイル名
@@ -706,95 +437,28 @@ Lh=5
 #過去のマイクロホン入力信号
 x_bar=make_x_bar(stft_data,D,Lh)
 
-#ILRMAの基底数
-n_basis=2
-
-#処理するフレーm数
+#処理するフレーム数
 Lt=np.shape(stft_data)[-1]
 
-#ICAの分離フィルタを初期化
-Wilrma=np.zeros(shape=(Nk,n_sources,n_sources),dtype=np.complex)
-Pilrma_t=np.zeros(shape=(Nk,n_sources,(Lh+1)*n_sources),dtype=np.complex)
-#Wica=np.random.normal(size=Nk*n_sources*n_sources)+1.j*np.random.normal(size=Nk*n_sources*n_sources)
-#Wica=np.reshape(Wica,(Nk,n_sources,n_sources))
-
-Wilrma=Wilrma+np.eye(n_sources)[None,...]
-
-Wilrma_ip=Wilrma.copy()
-
-for tau in range(0,Lh+1):
-    Pilrma_t[:,:,tau*n_sources:(tau+1)*n_sources]=Wilrma.copy()
-
-#ILRMA用
-b=np.ones(shape=(Nk,n_sources,n_basis))
-a=np.random.uniform(size=(n_basis*n_sources*Lt))
-a=np.reshape(a,(n_basis,n_sources,Lt))
-
-start_time=time.time()
-
-#ILRMA-Tに基づく音源分離と残響除去
-Wilrma_t,s_ilrma_t,cost_buff_ilrma_t=execute_ip_time_varying_gaussian_ilrma_t(stft_data,x_bar,Pilrma_t,a.copy(),b.copy(),n_iterations=n_ica_iterations)
-
-y_ilrma_t=projection_back(s_ilrma_t,Wilrma_t)
-
-#IP法に基づくIVA実行コード（引数に与える関数を変更するだけ)
-Wilrma_dereverb_ip,s_ilrma_dereverb_ip,cost_buff_ilrma_dereverb_ip=execute_ip_time_varying_gaussian_ilrma_dereverb(stft_data,x_bar,Wilrma_ip.copy(),a.copy(),b.copy(),n_iterations=n_ica_iterations)
-
-#Wilrma_ip,s_ilrma_ip,cost_buff_ilrma_ip=execute_ip_time_varying_gaussian_ilrma(stft_data,Wilrma_ip,a,b,n_iterations=n_ica_iterations)
-
-y_ilrma_dereverb_ip=projection_back(s_ilrma_dereverb_ip,Wilrma_dereverb_ip)
-
-#IP法に基づくIVA実行コード（引数に与える関数を変更するだけ)
-Wilrma_ip,s_ilrma_ip,cost_buff_ilrma_ip=execute_ip_time_varying_gaussian_ilrma(stft_data,Wilrma_ip,a.copy(),b.copy(),n_iterations=n_ica_iterations)
-
-#Wilrma_ip,s_ilrma_ip,cost_buff_ilrma_ip=execute_ip_time_varying_gaussian_ilrma(stft_data,Wilrma_ip,a,b,n_iterations=n_ica_iterations)
-
-y_ilrma_ip=projection_back(s_ilrma_ip,Wilrma_ip)
-ilrma_ip_time=time.time()
-
-#MM法に基づくLGM実行コード
+#MM法に基づくLGM+Dereverb実行コード
 Rlgm_mm_dereverb,vlgm_mm_dereverb,y_lgm_mm_dereverb,cost_buff_lgm_mm_dereverb=execute_mm_lgm_dereverb(stft_data,x_bar,Ns=n_sources,n_iterations=n_ica_iterations)
 permutation_index_result=solver_inter_frequency_permutation(y_lgm_mm_dereverb[0,...])
+
 #パーミュテーションを解く
 for k in range(Nk):
     y_lgm_mm_dereverb[:,:,k,:]=y_lgm_mm_dereverb[:,permutation_index_result[k],k,:]
 
-lgm_mm_time=time.time()
-
-
+#MM法に基づくLGM実行コード
 Rlgm_mm,vlgm_mm,y_lgm_mm,cost_buff_lgm_mm=execute_mm_lgm(stft_data,Ns=n_sources,n_iterations=n_ica_iterations)
 permutation_index_result=solver_inter_frequency_permutation(y_lgm_mm[0,...])
 for k in range(Nk):
     y_lgm_mm[:,:,k,:]=y_lgm_mm[:,permutation_index_result[k],k,:]
 
-lgm_mm_time=time.time()
-
-t,y_ilrma_ip=sp.istft(y_ilrma_ip[0,...],fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
-t,y_ilrma_t=sp.istft(y_ilrma_t[0,...],fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
-t,y_ilrma_dereverb_ip=sp.istft(y_ilrma_dereverb_ip[0,...],fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
 t,y_lgm_mm=sp.istft(y_lgm_mm[0,...],fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
 t,y_lgm_mm_dereverb=sp.istft(y_lgm_mm_dereverb[0,...],fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
 
 snr_pre=calculate_snr(multi_conv_data_left_no_noise[0,...],multi_conv_data[0,...])+calculate_snr(multi_conv_data_right_no_noise[0,...],multi_conv_data[0,...])
 snr_pre/=2.
-
-snr_ilrma_t_post1=calculate_snr(multi_conv_data_left_no_noise[0,...],y_ilrma_t[0,...])+calculate_snr(multi_conv_data_right_no_noise[0,...],y_ilrma_t[1,...])
-snr_ilrma_t_post2=calculate_snr(multi_conv_data_left_no_noise[0,...],y_ilrma_t[1,...])+calculate_snr(multi_conv_data_right_no_noise[0,...],y_ilrma_t[0,...])
-
-snr_ilrma_t_post=np.maximum(snr_ilrma_t_post1,snr_ilrma_t_post2)
-snr_ilrma_t_post/=2.
-
-snr_ilrma_ip_post1=calculate_snr(multi_conv_data_left_no_noise[0,...],y_ilrma_ip[0,...])+calculate_snr(multi_conv_data_right_no_noise[0,...],y_ilrma_ip[1,...])
-snr_ilrma_ip_post2=calculate_snr(multi_conv_data_left_no_noise[0,...],y_ilrma_ip[1,...])+calculate_snr(multi_conv_data_right_no_noise[0,...],y_ilrma_ip[0,...])
-
-snr_ilrma_ip_post=np.maximum(snr_ilrma_ip_post1,snr_ilrma_ip_post2)
-snr_ilrma_ip_post/=2.
-
-snr_ilrma_dereverb_ip_post1=calculate_snr(multi_conv_data_left_no_noise[0,...],y_ilrma_dereverb_ip[0,...])+calculate_snr(multi_conv_data_right_no_noise[0,...],y_ilrma_dereverb_ip[1,...])
-snr_ilrma_dereverb_ip_post2=calculate_snr(multi_conv_data_left_no_noise[0,...],y_ilrma_dereverb_ip[1,...])+calculate_snr(multi_conv_data_right_no_noise[0,...],y_ilrma_dereverb_ip[0,...])
-
-snr_ilrma_dereverb_ip_post=np.maximum(snr_ilrma_dereverb_ip_post1,snr_ilrma_dereverb_ip_post2)
-snr_ilrma_dereverb_ip_post/=2.
 
 snr_lgm_mm_post1=calculate_snr(multi_conv_data_left_no_noise[0,...],y_lgm_mm[0,...])+calculate_snr(multi_conv_data_right_no_noise[0,...],y_lgm_mm[1,...])
 snr_lgm_mm_post2=calculate_snr(multi_conv_data_left_no_noise[0,...],y_lgm_mm[1,...])+calculate_snr(multi_conv_data_right_no_noise[0,...],y_lgm_mm[0,...])
@@ -809,16 +473,6 @@ snr_lgm_mm_dereverb_post2=calculate_snr(multi_conv_data_left_no_noise[0,...],y_l
 snr_lgm_mm_dereverb_post=np.maximum(snr_lgm_mm_dereverb_post1,snr_lgm_mm_dereverb_post2)
 snr_lgm_mm_dereverb_post/=2.
 
-
-write_file_from_time_signal(y_ilrma_ip[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_1.wav",sample_rate)
-write_file_from_time_signal(y_ilrma_ip[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_ip_2.wav",sample_rate)
-
-write_file_from_time_signal(y_ilrma_dereverb_ip[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_dereverb_ip_1.wav",sample_rate)
-write_file_from_time_signal(y_ilrma_dereverb_ip[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_dereverb_ip_2.wav",sample_rate)
-
-write_file_from_time_signal(y_ilrma_t[0,...]*np.iinfo(np.int16).max/20.,"./ilrma_t_1.wav",sample_rate)
-write_file_from_time_signal(y_ilrma_t[1,...]*np.iinfo(np.int16).max/20.,"./ilrma_t_2.wav",sample_rate)
-
 write_file_from_time_signal(y_lgm_mm[0,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_1.wav",sample_rate)
 write_file_from_time_signal(y_lgm_mm[1,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_2.wav",sample_rate)
 
@@ -826,11 +480,10 @@ write_file_from_time_signal(y_lgm_mm_dereverb[0,...]*np.iinfo(np.int16).max/20.,
 write_file_from_time_signal(y_lgm_mm_dereverb[1,...]*np.iinfo(np.int16).max/20.,"./lgm_mm_dereverb_2.wav",sample_rate)
 
 
-print("method:    ", "ILRMA", "ILRMA-Dereverb","ILRMA-T","LGM-MM","LGM-Dereverb-MM")
-#print("処理時間[sec]: {:.2f} [sec] {:.2f} [sec]".format(ilrma_ip_time-start_time,lgm_mm_time-start_time))
-print("Δsnr [dB]:  {:.2f}  {:.2f}  {:.2f}  {:.2f}  {:.2f}".format(snr_ilrma_ip_post-snr_pre,snr_ilrma_dereverb_ip_post-snr_pre,snr_ilrma_t_post-snr_pre,snr_lgm_mm_post-snr_pre,snr_lgm_mm_dereverb_post-snr_pre))
+print("method:    ", "LGM-MM","LGM-Dereverb-MM")
+print("Δsnr [dB]:  {:.2f}  {:.2f}".format(snr_lgm_mm_post-snr_pre,snr_lgm_mm_dereverb_post-snr_pre))
 
 #コストの値を表示
 #for t in range(n_ica_iterations):
-#    print(t,cost_buff_ica[t],cost_buff_iva[t],cost_buff_iva_ip[t],cost_buff_ilrma_ip[t],cost_buff_lgm_em[t],cost_buff_lgm_mm[t])
+#    print(t,cost_buff_lgm_mm[t],cost_buff_lgm_mm_dereverb[t])
 
