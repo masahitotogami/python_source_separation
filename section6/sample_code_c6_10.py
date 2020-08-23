@@ -149,7 +149,7 @@ mic_alignments = np.array(
 #マイクロホン数
 n_channels=np.shape(mic_alignments)[0]
 
-#get the microphone array
+#マイクロホンアレイの座標
 R=mic_alignments .T+mic_array_loc[:,None]
 
 # 部屋を生成する
