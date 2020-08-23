@@ -11,7 +11,6 @@ import itertools
 import time
 
 
-
 #コントラスト関数の微分（球対称多次元ラプラス分布を仮定）
 #s_hat: 分離信号(M, Nk, Lt)
 def phi_multivariate_laplacian(s_hat):
@@ -385,8 +384,6 @@ n_ica_iterations=50
 
 #ICAの分離フィルタを初期化
 Wica=np.zeros(shape=(Nk,n_sources,n_sources),dtype=np.complex)
-#Wica=np.random.normal(size=Nk*n_sources*n_sources)+1.j*np.random.normal(size=Nk*n_sources*n_sources)
-#Wica=np.reshape(Wica,(Nk,n_sources,n_sources))
 
 Wica=Wica+np.eye(n_sources)[None,...]
 
@@ -407,6 +404,7 @@ iva_ip_time=time.time()
 Wica,s_ica,cost_buff_ica=execute_natural_gradient_ica(stft_data,Wica,mu=0.1,n_ica_iterations=n_ica_iterations,is_use_non_holonomic=False)
 permutation_index_result=solver_inter_frequency_permutation(s_ica)
 y_ica=projection_back(s_ica,Wica)
+
 #パーミュテーションを解く
 for k in range(Nk):
     y_ica[:,:,k,:]=y_ica[:,permutation_index_result[k],k,:]

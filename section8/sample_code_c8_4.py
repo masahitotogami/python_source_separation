@@ -568,8 +568,6 @@ Lt=np.shape(stft_data)[-1]
 
 #ICAの分離フィルタを初期化
 Wica=np.zeros(shape=(Nk,n_sources,n_sources),dtype=np.complex)
-#Wica=np.random.normal(size=Nk*n_sources*n_sources)+1.j*np.random.normal(size=Nk*n_sources*n_sources)
-#Wica=np.reshape(Wica,(Nk,n_sources,n_sources))
 
 Wica=Wica+np.eye(n_sources)[None,...]
 
@@ -583,24 +581,27 @@ a=np.random.uniform(size=(n_basis*n_sources*Lt))
 a=np.reshape(a,(n_basis,n_sources,Lt))
 
 start_time=time.time()
-#自然勾配法に基づくIVA実行コード（引数に与える関数を変更するだけ)
+
+#自然勾配法に基づくIVA実行コード
 Wiva,s_iva,cost_buff_iva=execute_natural_gradient_ica(stft_data,Wiva,phi_func=phi_multivariate_laplacian,contrast_func=contrast_multivariate_laplacian,mu=0.1,n_ica_iterations=n_ica_iterations,is_use_non_holonomic=False)
 y_iva=projection_back(s_iva,Wiva)
 iva_time=time.time()
 
-#IP法に基づくIVA実行コード（引数に与える関数を変更するだけ)
+#IP法に基づくILRMA実行コード
 Wilrma_ip,s_ilrma_ip,cost_buff_ilrma_ip=execute_ip_time_varying_gaussian_ilrma(stft_data,Wilrma_ip,a,b,n_iterations=n_ica_iterations)
 y_ilrma_ip=projection_back(s_ilrma_ip,Wilrma_ip)
 ilrma_ip_time=time.time()
 
-#IP法に基づくIVA実行コード（引数に与える関数を変更するだけ)
+#IP法に基づくIVA実行コード
 Wiva_ip,s_iva_ip,cost_buff_iva_ip=execute_ip_multivariate_laplacian_iva(stft_data,Wiva_ip,n_iterations=n_ica_iterations)
 y_iva_ip=projection_back(s_iva_ip,Wiva_ip)
 iva_ip_time=time.time()
 
+#自然勾配法に基づくICA実行コード
 Wica,s_ica,cost_buff_ica=execute_natural_gradient_ica(stft_data,Wica,mu=0.1,n_ica_iterations=n_ica_iterations,is_use_non_holonomic=False)
 permutation_index_result=solver_inter_frequency_permutation(s_ica)
 y_ica=projection_back(s_ica,Wica)
+
 #パーミュテーションを解く
 for k in range(Nk):
     y_ica[:,:,k,:]=y_ica[:,permutation_index_result[k],k,:]
