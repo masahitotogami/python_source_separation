@@ -62,8 +62,6 @@ n_channels=np.shape(mic_alignments)[0]
 #マイクロホンアレイの座標系
 R=mic_alignments .T+mic_array_loc[:,None]
 
-print(R.T)
-
 # 部屋を生成する
 room = pa.ShoeBox(room_dim, fs=sample_rate, max_order=0)
 
@@ -85,7 +83,6 @@ source_locations[2, :] = np.cos(doas[:, 0])
 source_locations *= distance
 source_locations += mic_array_loc[:, None]
 
-print(np.shape(clean_data))
 #各音源をシミュレーションに追加する
 for s in range(n_sources):
     clean_data[s]/= np.std(clean_data[s])
