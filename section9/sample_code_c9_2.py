@@ -53,6 +53,47 @@ def dereverberation_ls(x,x_bar):
         
     return(x_dereverb)
 
+#WPEで残響を除去
+#x:入力信号( M, Nk, Lt)
+#x_bar:過去のマイク入力信号(Lh,M, Nk, Lt)
+#return x_dereverb:残響除去後の信号(Nk,Lt)
+def dereverberation_wpe(x,x_bar,wpe_iterations=10):
+
+    #マイクロホン数・周波数・フレーム数・タップ長を取得する
+    M=np.shape(x)[0]
+    Nk=np.shape(x)[1]
+    Lt=np.shape(x)[2]
+    Lh=np.shape(x_bar)[0]
+
+    #入力信号の形式を変更・変数を初期化
+    x_bar=np.reshape(x_bar,[Lh*M,Nk,Lt])
+    v=np.square(np.abs(x[0,...]))
+
+    cost_buff=[]
+    for t in range(wpe_iterations):
+        #共分散行列を計算
+        x_bar_x_bar_h=np.einsum('kt,ikt,jkt->kij',1./v,x_bar,np.conjugate(x_bar))
+
+        #相関ベクトルを計算
+        correlation=np.einsum('kt,ikt,kt->ki',1./v,x_bar,np.conjugate(x[0,...]))
+
+        #フィルタ算出
+        filter=np.linalg.solve(x_bar_x_bar_h,correlation)
+        
+        #残響除去実施
+        x_reverb=np.einsum('kj,jkt->kt',np.conjugate(filter),x_bar)
+        x_dereverb=x[0,...]-x_reverb
+
+        #パラメータ更新
+        v=np.square(np.abs(x_dereverb))
+        v=np.maximum(v,1.e-8)
+
+        #コスト計算
+        cost=np.mean(np.log(v))
+        cost_buff.append(cost)
+    return(x_dereverb,cost_buff)
+
+
 #2バイトに変換してファイルに保存
 #signal: time-domain 1d array (float)
 #file_name: 出力先のファイル名
@@ -235,15 +276,27 @@ x_bar=make_x_bar(stft_data,D,Lh)
 #LSで残響除去
 x_dereverb_ls=dereverberation_ls(stft_data,x_bar)
 
+#WPEで残響除去
+x_dereverb_wpe,cost_buff_wpe=dereverberation_wpe(stft_data,x_bar,n_wpe_iterations)
+
 #x:入力信号( M, Nk, Lt)
 
 t,x_dereverb_ls=sp.istft(x_dereverb_ls,fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
+t,x_dereverb_wpe=sp.istft(x_dereverb_wpe,fs=sample_rate,window="hann",nperseg=N,noverlap=N-Nshift)
 
 snr_pre=calculate_snr(multi_conv_data_no_reverb[0,...],multi_conv_data[0,...])
 snr_ls_post=calculate_snr(multi_conv_data_no_reverb[0,...],x_dereverb_ls)
+snr_wpe_post=calculate_snr(multi_conv_data_no_reverb[0,...],x_dereverb_wpe)
 
 write_file_from_time_signal(x_dereverb_ls[:wave_len]*np.iinfo(np.int16).max/20.,"./dereverb_ls_{}_{}.wav".format(Lh,D),sample_rate)
+write_file_from_time_signal(x_dereverb_wpe[:wave_len]*np.iinfo(np.int16).max/20.,"./dereverb_wpe_{}_{}.wav".format(Lh,D),sample_rate)
 
-print("method:    ", "LS")
-print("Δsnr [dB]: {:.2f}".format(snr_ls_post-snr_pre))
+
+
+print("method:    ", "LS","WPE")
+print("Δsnr [dB]: {:.2f}  {:.2f}".format(snr_ls_post-snr_pre,snr_wpe_post-snr_pre))
+
+#コストの値を表示
+#for t in range(n_wpe_iterations):
+#    print(t,cost_buff_wpe[t])
 
