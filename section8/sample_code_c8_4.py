@@ -693,7 +693,7 @@ write_file_from_time_signal(y_lgm_mm[1,...]*np.iinfo(np.int16).max/20.,"./lgm_mm
 
 
 print("method:    ", "NG-ICA", "NG-IVA", "AuxIVA", "ILRMA","LGM-EM","LGM-MM")
-print("処理時間[sec]: {:.2f} [sec]  {:.2f} [sec]  {:.2f} [sec]  {:.2f} [sec]  {:.2f} [sec] {:.2f} [sec]".format(ica_time-iva_ip_time,iva_ip_time-ilrma_ip_time,iva_time-start_time,ilrma_ip_time-iva_time,lgm_em_time-lgm_mm_time,lgm_mm_time-ica_time))
+print("処理時間[sec]: {:.2f}   {:.2f}   {:.2f}   {:.2f}   {:.2f}  {:.2f}".format(ica_time-iva_ip_time,iva_ip_time-ilrma_ip_time,iva_time-start_time,ilrma_ip_time-iva_time,lgm_em_time-lgm_mm_time,lgm_mm_time-ica_time))
 print("Δsnr [dB]: {:.2f}  {:.2f}  {:.2f}  {:.2f}   {:.2f}  {:.2f}".format(snr_ica_post-snr_pre,snr_iva_post-snr_pre,snr_iva_ip_post-snr_pre,snr_ilrma_ip_post-snr_pre,snr_lgm_em_post-snr_pre,snr_lgm_mm_post-snr_pre))
 
 #コストの値を表示

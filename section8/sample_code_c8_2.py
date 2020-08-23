@@ -447,7 +447,7 @@ write_file_from_time_signal(y_iva_ip[1,...]*np.iinfo(np.int16).max/20.,"./iva_ip
 
 
 print("method:    ", "NG-ICA", "NG-IVA", "AuxIVA")
-print("処理時間[sec]: {:.2f} [sec]  {:.2f} [sec]  {:.2f} [sec]".format(ica_time-iva_ip_time,iva_ip_time-iva_time,iva_time-start_time))
+print("処理時間[sec]: {:.2f}  {:.2f}  {:.2f}".format(ica_time-iva_ip_time,iva_ip_time-iva_time,iva_time-start_time))
 print("Δsnr [dB]: {:.2f}  {:.2f}  {:.2f}".format(snr_ica_post-snr_pre,snr_iva_post-snr_pre,snr_iva_ip_post-snr_pre))
 
 #コストの値を表示
