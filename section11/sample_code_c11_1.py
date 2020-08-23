@@ -564,7 +564,7 @@ n_ica_iterations=50
 #ILRMAの基底数
 n_basis=2
 
-#処理するフレーm数
+#処理するフレーム数
 Lt=np.shape(stft_data)[-1]
 
 #ICAの分離フィルタを初期化
