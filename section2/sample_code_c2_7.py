@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 
 #numpyをインポート
 import numpy as np

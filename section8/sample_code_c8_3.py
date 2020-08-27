@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 import wave as wave
 import pyroomacoustics as pa
