@@ -20,7 +20,7 @@ print("Imaginary(z)=",np.imag(z))
 #複素共役を表示する
 print("z^*=",np.conjugate(z))
 
-#複素共役を表示する
+#絶対値を表示する
 print("|z|=",np.abs(z))
 
 #zとuを足す
