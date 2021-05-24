@@ -25,5 +25,5 @@
 |22|p.41の5行目|「#複素共役を表示する」 |「#絶対値を表示する」|2020/11/13|
 |23|p.40|式(2.11) ![式2.11](err_eq_2_11.png) |式(2.11) ![式2.11](eq_2_11.png)|2021/05/25|
 |24|p.343|I. Dokmani? |I. Dokmanic|2021/05/25|
-|25|p.58|noise amp=np.power(np.mean(np.power(amp,p)［:,:n noise only frame］,axis=1,keepdims=True),1./2) |noise amp=np.power(np.mean(np.power(amp,p)［:,:n noise only frame］,axis=1,keepdims=True),1./p) |2021/05/25|
+|25|p.58|noise amp=np.power(np.mean(np.power(amp,p)［:,:n_noise_only_frame］,axis=1,keepdims=True),1./2) |noise amp=np.power(np.mean(np.power(amp,p)［:,:n_noise_only_frame］,axis=1,keepdims=True),1./p) |2021/05/25|
 
