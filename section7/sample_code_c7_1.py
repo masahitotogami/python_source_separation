@@ -148,7 +148,7 @@ n_channels=np.shape(mic_alignments)[0]
 R=mic_alignments .T+mic_array_loc[:,None]
 
 # 部屋を生成する
-room = pa.ShoeBox(room_dim, fs=sample_rate)
+room = pa.ShoeBox(room_dim, fs=sample_rate, max_order=0)
 room_no_noise_left = pa.ShoeBox(room_dim, fs=sample_rate, max_order=0)
 room_no_noise_right = pa.ShoeBox(room_dim, fs=sample_rate, max_order=0)
 
